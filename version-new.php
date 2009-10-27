@@ -5,6 +5,21 @@
 	$app = new Application($_GET['id']);
 	if(!$app->ok()) redirect('index.php');
 
+	if (!function_exists("sys_get_temp_dir")) {
+	   function sys_get_temp_dir() {
+	      # check possible alternatives
+	      ($temp = ini_get("temp_dir"))
+	      or
+	      ($temp = $_SERVER["TEMP"])
+	      or
+	      ($temp = $_SERVER["TMP"])
+	      or
+	      ($temp = "/tmp");
+	      # fin
+	      return($temp);
+	   }
+	}
+
 	if(isset($_POST['btnCreateVersion']))
 	{
 		$Error->blank($_POST['version_number'], 'Version Number');
@@ -98,15 +113,16 @@
 	   curl_close($ch);
 	   return $data;
 	}
-		
-	function startsWith($string, $char)
-	{
-	    $length = strlen($char);
-	    return (substr($string, 0, $length) === $char);
-	}
 	
 	function sign_file($filename, $keydata)
     {
+	
+		/* 
+		If shell_exec() throws an error you may need to add
+		the following line to your VirtualHost config for apache:
+		
+		php_admin_flag safe_mode Off    
+		*/
 	
 		$cmd1 = 'openssl dgst -sha1 -binary < ' . $filename;
 		$binary = shell_exec($cmd1);
