@@ -30,7 +30,9 @@
 			<title><?PHP echo $app->name; ?> <?PHP echo $v->human_version; ?></title>
 			<description><![CDATA[ <?PHP echo $v->release_notes; ?> ]]></description>
 			<pubDate><?PHP echo(date('D, d M Y H:i:s O')); ?></pubDate>
-			<enclosure url="<?PHP echo $v->url; ?>" sparkle:shortVersionString="<?PHP echo $v->human_version; ?>" sparkle:version="<?PHP echo $v->version_number; ?>" length="<?PHP echo $v->filesize; ?>" type="application/octet-stream" sparkle:dsaSignature="<?PHP echo $v->signature; ?>" />
+			<enclosure url="<?PHP 				
+				echo("http://".$_SERVER['HTTP_HOST'].slash(WEB_ROOT)."update.php?id=$v->id"); 
+			?>" sparkle:shortVersionString="<?PHP echo $v->human_version; ?>" sparkle:version="<?PHP echo $v->version_number; ?>" length="<?PHP echo $v->filesize; ?>" type="application/octet-stream" sparkle:dsaSignature="<?PHP echo $v->signature; ?>" />
 		</item>
 		<?PHP endforeach; ?>
 	</channel>

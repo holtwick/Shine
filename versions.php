@@ -66,7 +66,7 @@
 									<tr>
 										<td><a href="version-edit.php?id=<?PHP echo $v->id; ?>"><?PHP echo $v->human_version; ?></a></td>
 										<td><?PHP echo $v->version_number; ?></td>
-										<td><?PHP echo dater($v->dt, 'Y-m-d h:m'); ?></td>
+										<td><?PHP echo dater($v->dt, 'Y-m-d h:i'); ?></td>
 										<td><?PHP 
 											echo number_format($v->downloads);
 											echo (" / ");
