@@ -24,6 +24,7 @@
 			$v->url            = $_POST['url'];
 			$v->dt             = dater();
 			$v->downloads      = 0;
+			$v->updates        = 0;
 			
 			$tmpfile = "";
 			if($v->url) {

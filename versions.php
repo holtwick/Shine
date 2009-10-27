@@ -58,7 +58,7 @@
 										<th>Human Readable Version</th>
 										<th>Sparkle Version Number</th>
 										<th>Release Date</th>
-										<th>Downloads</th>
+										<th>Downloads / Updates</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -66,8 +66,12 @@
 									<tr>
 										<td><a href="version-edit.php?id=<?PHP echo $v->id; ?>"><?PHP echo $v->human_version; ?></a></td>
 										<td><?PHP echo $v->version_number; ?></td>
-										<td><?PHP echo dater($v->dt, 'n/d/Y g:ia'); ?></td>
-										<td><?PHP echo number_format($v->downloads); ?></td>
+										<td><?PHP echo dater($v->dt, 'Y-m-d h:m'); ?></td>
+										<td><?PHP 
+											echo number_format($v->downloads);
+											echo (" / ");
+											echo number_format($v->updates);
+										?></td>
 									</tr>
 									<?PHP endforeach; ?>
 								</tbody>
