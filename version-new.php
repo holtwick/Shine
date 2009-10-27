@@ -28,7 +28,12 @@
 			$tmpfile = "";
 			if($v->url) {
 				$tmpfile = tempnam(sys_get_temp_dir(), 'sparkle_stdin');
+				
 				$data = get_data_from_url($v->url);
+				if(!$data) {
+				 	die("The file at <a href='$v->url'>$v->url</a> does not exist or is empty!");	
+				}
+				
 				file_put_contents($tmpfile, $data);
 				
 			} else {
@@ -48,14 +53,17 @@
 					$s3 = new S3($app->s3key, $app->s3pkey);
 					$s3->putObject($app->s3bucket, $object, $tmpfile, true);
 				} else {
-				
-					die ("Configure your Amazon S3 acoount or modify version-new.php file.");
+					die ("Configure your Amazon S3 account or modify version-new.php file.");
 				
 					/*
 					$v->url = '/Users/dirk/work/wordpress/shine/' . $object;
 					copy($_FILES['file']['tmp_name'], '/Users/dirk/work/wordpress/shine/' . $object);
 					*/
 				}
+			} else {
+				
+				// Cleanup download
+				unlink($tmpfile);
 			}
 			
 			$v->insert();
@@ -167,9 +175,13 @@
 								<p><label for="version_number">Sparkle Version Number</label> <input type="text" name="version_number" id="version_number" value="<?PHP echo $version_number;?>" class="text"></p>
 								<p><label for="human_version">Human Readable Version Number</label> <input type="text" name="human_version" id="human_version" value="<?PHP echo $human_version;?>" class="text"></p>
 								<p><label for="release_notes">Release Notes</label> <textarea class="text" name="release_notes" id="release_notes"><?PHP echo $release_notes; ?></textarea></p>
-								<p>You have to provide one of the following informations:</p>
-								<p><label for="file">Application Archive</label> <input type="file" name="file" id="file"></p>
-								<p><label for="url">Download URL (File needs to exist at this location already!)</label> <input type="text" name="url" id="url" value="<?PHP echo $url;?>" class="text"></p>
+								<h3>You have to provide only one of the following informations</h3>
+								<p><label for="file">Option 1: Application Archive</label> <input type="file" name="file" id="file"></p>
+								<p>
+									<label for="url">Option 2: Download URL (File needs to exist at this location already!)</label> 
+									<input type="text" name="url" id="url" value="<?PHP echo $url;?>" class="text">
+									<span class="info">The file will be downloaded to calculate the Sparkle signature.</span>
+								</p>
 								<p><input type="submit" name="btnCreateVersion" value="Create Version" id="btnCreateVersion"></p>
 							</form>
 						</div>
