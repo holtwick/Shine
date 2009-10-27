@@ -140,6 +140,7 @@
 									<span class="info">Ex: MyApplication.app</span>
                                 </p>
 								<hr>
+								<h3>Amazon S3 (optional)</h3>
                                 <p>
 									<label for="s3key">Amazon S3 Key</label>
                                     <input type="text" class="text" name="s3key" id="s3key" value="<?PHP echo $s3key; ?>">
@@ -160,17 +161,19 @@
 
 								<hr>
 
+								<h3>Sparkle</h3>
                                 <p>
-									<label for="sparkle_key">Sparkle Public Key</label>
+									<label for="sparkle_key">Sparkle Public Key (including header and footer)</label>
                                     <textarea name="sparkle_key" id="sparkle_key" class="text"><?PHP echo $sparkle_key ?></textarea>
                                 </p>
                                 <p>
-									<label for="sparkle_pkey">Sparkle Private Key</label>
+									<label for="sparkle_pkey">Sparkle Private Key (including header and footer)</label>
                                     <textarea name="sparkle_pkey" id="sparkle_pkey" class="text"><?PHP echo $sparkle_pkey ?></textarea>
                                 </p>
 
 								<hr>
 
+								<h3>Aquatic Prime</h3>
 								<p>
 									<label for="license_type">License Type</label><br>
                                     <select name="license_type" id="license_type">
@@ -192,6 +195,7 @@
 
 								<hr>
 
+								<h3>Paypal</h3>
 								<p>
 									<label for="custom_salt">Custom License Salt (if not using Aquatic Prime)</label>
                                     <textarea name="custom_salt" id="custom_salt" class="text"><?PHP echo $custom_salt ?></textarea>
@@ -203,6 +207,7 @@
                                 </p>                                
 								<hr>
 								
+								<h3>License Response Email</h3>
 								<p>
 									<label for="from_email">From Email</label>
 									<input type="text" class="text" name="from_email" value="<?PHP echo $from_email; ?>" id="from_email">

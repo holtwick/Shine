@@ -9,27 +9,55 @@
 	{
 		$Error->blank($_POST['version_number'], 'Version Number');
 		$Error->blank($_POST['human_version'], 'Human Readable Version Number');
-		$Error->upload($_FILES['file'], 'file');
+		
+		if(!$_POST['url']) {
+			$Error->upload($_FILES['file'], 'file');
+		}
 		
 		if($Error->ok())
-		{
+		{			
 			$v = new Version();
 			$v->app_id         = $app->id;
 			$v->version_number = $_POST['version_number'];
 			$v->human_version  = $_POST['human_version'];
 			$v->release_notes  = $_POST['release_notes'];
+			$v->url            = $_POST['url'];
 			$v->dt             = dater();
 			$v->downloads      = 0;
-			$v->filesize       = filesize($_FILES['file']['tmp_name']);
-			$v->signature      = sign_file($_FILES['file']['tmp_name'], $app->sparkle_pkey);
 			
-			$object = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $app->name)) . "_" . $v->version_number . "." . substr($_FILES['file']['name'], -3);
-			$v->url = slash($app->s3path) . $object;
-			$info   = parse_url($app->s3path);
-			$object = slash($info['path']) . $object;
-			chmod($_FILES['file']['tmp_name'], 0755);
-			$s3 = new S3($app->s3key, $app->s3pkey);
-			$s3->putObject($app->s3bucket, $object, $_FILES['file']['tmp_name'], true);
+			$tmpfile = "";
+			if($v->url) {
+				$tmpfile = tempnam(sys_get_temp_dir(), 'sparkle_stdin');
+				$data = get_data_from_url($v->url);
+				file_put_contents($tmpfile, $data);
+				
+			} else {
+				$tmpfile = $_FILES['file']['tmp_name'];	
+			}
+			
+			$v->filesize       = filesize($tmpfile);
+			$v->signature      = sign_file($tmpfile, $app->sparkle_pkey);
+			
+			if(!$v->url) {
+				$object = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $app->name)) . "_" . $v->version_number . "." . substr($_FILES['file']['name'], -3);
+				if($app->s3bucket && $app->s3path) {
+					$v->url = slash($app->s3path) . $object;
+					$info   = parse_url($app->s3path);
+					$object = slash($info['path']) . $object;
+					chmod($tmpfile, 0755);
+					$s3 = new S3($app->s3key, $app->s3pkey);
+					$s3->putObject($app->s3bucket, $object, $tmpfile, true);
+				} else {
+				
+					die ("Configure your Amazon S3 acoount or modify version-new.php file.");
+				
+					/*
+					$v->url = '/Users/dirk/work/wordpress/shine/' . $object;
+					copy($_FILES['file']['tmp_name'], '/Users/dirk/work/wordpress/shine/' . $object);
+					*/
+				}
+			}
+			
 			$v->insert();
 
 			redirect('versions.php?id=' . $app->id);
@@ -39,6 +67,7 @@
 			$version_number = $_POST['version_number'];
 			$human_version  = $_POST['human_version'];
 			$release_notes  = $_POST['release_notes'];
+			$url            = $_POST['url'];
 		}
 	}
 	else
@@ -46,19 +75,45 @@
 		$version_number = '';
 		$human_version  = '';
 		$release_notes  = '';
+		$url            = '';
+	}
+
+	function get_data_from_url($url) 
+	{ 
+	   $ch = curl_init();
+	   $timeout = 5;
+	   curl_setopt($ch,CURLOPT_URL,$url);
+	   curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+	   curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
+	   $data = curl_exec($ch);
+	   curl_close($ch);
+	   return $data;
+	}
+		
+	function startsWith($string, $char)
+	{
+	    $length = strlen($char);
+	    return (substr($string, 0, $length) === $char);
 	}
 	
 	function sign_file($filename, $keydata)
     {
-		$binary = shell_exec('openssl dgst -sha1 -binary < ' . $filename);
-		$stdin = tempnam('/tmp', 'foo');
+	
+		$cmd1 = 'openssl dgst -sha1 -binary < ' . $filename;
+		$binary = shell_exec($cmd1);
+		$stdin = tempnam(sys_get_temp_dir(), 'sparkle_stdin');
 		file_put_contents($stdin, $binary);
 
-		$keyin = tempnam('/tmp', 'bar');
-		file_put_contents($keyin, "-----BEGIN DSA PRIVATE KEY-----\n" . $keydata . "\n-----END DSA PRIVATE KEY-----\n");
+		$keyin = tempnam(sys_get_temp_dir(), 'sparkle_keyin');
+		file_put_contents($keyin, $keydata);
 
-		$signed = shell_exec("openssl dgst -dss1 -sign $keyin < $stdin");
+		$cmd2 = "openssl dgst -dss1 -sign $keyin < $stdin";
+		$signed = shell_exec($cmd2);
 
+		// Cleanup
+		unlink($stdin);
+		unlink($keyin);
+		
 		return base64_encode($signed);		
     }
 ?>
@@ -112,7 +167,9 @@
 								<p><label for="version_number">Sparkle Version Number</label> <input type="text" name="version_number" id="version_number" value="<?PHP echo $version_number;?>" class="text"></p>
 								<p><label for="human_version">Human Readable Version Number</label> <input type="text" name="human_version" id="human_version" value="<?PHP echo $human_version;?>" class="text"></p>
 								<p><label for="release_notes">Release Notes</label> <textarea class="text" name="release_notes" id="release_notes"><?PHP echo $release_notes; ?></textarea></p>
+								<p>You have to provide one of the following informations:</p>
 								<p><label for="file">Application Archive</label> <input type="file" name="file" id="file"></p>
+								<p><label for="url">Download URL (File needs to exist at this location already!)</label> <input type="text" name="url" id="url" value="<?PHP echo $url;?>" class="text"></p>
 								<p><input type="submit" name="btnCreateVersion" value="Create Version" id="btnCreateVersion"></p>
 							</form>
 						</div>
