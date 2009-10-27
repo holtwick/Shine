@@ -61,6 +61,7 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
     <link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
     <link rel="stylesheet" href="css/yuiapp.css" type="text/css">
+	<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
 </head>
 <body class="rounded">
     <div id="doc3" class="yui-t0">
@@ -103,7 +104,7 @@
 								<p><label for="version_number">Version Number</label> <input type="text" name="version_number" id="version_number" value="<?PHP echo $version_number;?>" class="text"></p>
 								<p><label for="human_version">Human Readable Version Number</label> <input type="text" name="human_version" id="human_version" value="<?PHP echo $human_version;?>" class="text"></p>
 								<p><label for="url">Download URL</label> <input type="text" name="url" id="url" value="<?PHP echo $url;?>" class="text"></p>
-								<p><label for="release_notes">Release Notes</label> <textarea class="text" name="release_notes" id="release_notes"><?PHP echo $release_notes; ?></textarea></p>
+								<p><label for="release_notes">Release Notes</label> <textarea class="text ckeditor" name="release_notes" id="release_notes"><?PHP echo $release_notes; ?></textarea></p>
 								<p><label for="filesize">Filesize</label> <input type="text" name="filesize" id="filesize" value="<?PHP echo $filesize; ?>" class="text"></p>
 								<p><label for="signature">Sparkle Signature</label> <input type="text" name="signature" id="signature" value="<?PHP echo $signature; ?>" class="text"></p>
 								<p>

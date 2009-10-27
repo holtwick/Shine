@@ -150,6 +150,7 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
     <link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
     <link rel="stylesheet" href="css/yuiapp.css" type="text/css">
+	<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
 </head>
 <body class="rounded">
     <div id="doc3" class="yui-t0">
@@ -191,7 +192,7 @@
 							<form action="version-new.php?id=<?PHP echo $app->id; ?>" method="post" enctype="multipart/form-data">
 								<p><label for="version_number">Sparkle Version Number</label> <input type="text" name="version_number" id="version_number" value="<?PHP echo $version_number;?>" class="text"></p>
 								<p><label for="human_version">Human Readable Version Number</label> <input type="text" name="human_version" id="human_version" value="<?PHP echo $human_version;?>" class="text"></p>
-								<p><label for="release_notes">Release Notes</label> <textarea class="text" name="release_notes" id="release_notes"><?PHP echo $release_notes; ?></textarea></p>
+								<p><label for="release_notes">Release Notes</label> <textarea class="text ckeditor" name="release_notes" id="release_notes"><?PHP echo $release_notes; ?></textarea></p>
 								<h3>You have to provide only one of the following informations</h3>
 								<p><label for="file">Option 1: Application Archive</label> <input type="file" name="file" id="file"></p>
 								<p>
