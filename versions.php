@@ -58,7 +58,7 @@
 										<th>Human Readable Version</th>
 										<th>Sparkle Version Number</th>
 										<th>Release Date</th>
-										<th>Downloads / Updates</th>
+										<th>Downloads + Updates</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -68,9 +68,19 @@
 										<td><?PHP echo $v->version_number; ?></td>
 										<td><?PHP echo dater($v->dt, 'Y-m-d h:i'); ?></td>
 										<td><?PHP 
-											echo number_format($v->downloads);
-											echo (" / ");
+ 										    $total = $v->downloads + $v->updates;
+											echo ("<strong>$total</strong> = ");
+											echo number_format($v->downloads);	
+											if($v->downloads) {
+												$pd = round($v->downloads / $total * 100);										
+												echo (" ($pd%)");
+											}
+											echo (" + ");
 											echo number_format($v->updates);
+											if($v->updates) {
+												$pu = round($v->updates / $total * 100);										
+												echo (" ($pu%)");
+											}
 										?></td>
 									</tr>
 									<?PHP endforeach; ?>
