@@ -62,13 +62,13 @@ h3 { font-size:153.9%; margin-bottom:0.5em; }
 
 /* Tables */
 table { width:100%; margin-bottom:2em; }
-table td, table th { padding:0.5em; }
+table td, table th { padding:0.5em; vertical-align: top; }
 table thead { background-color:#262626; color:#fff; font-weight:bold; }
 table thead a { text-decoration:none; color:#fff; }
 table thead a:hover { text-decoration:underline; }
 table tbody tr:hover { background-color:#ccc; }
 table tbody tr.new { background-color:#d0adad; }
-table tbody a { text-decoration:underline; }
+table tbody a { text-decoration:none; }
 
 /* Pager control*/
 ul.pager { text-align:left; margin-bottom:1em; }
@@ -107,7 +107,7 @@ ul.biglist li a:hover { text-decoration:underline; }
 
 /* Generics */
 p { margin-bottom:1em; }
-a { color:#7a1818; }
+a { color:#7a1818; text-decoration: none; }
 strong { font-weight:bold; }
 em { font-style:italic; }
 abbr, acronym { border-bottom:1px dotted #000; cursor:help; }

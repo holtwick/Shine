@@ -1,7 +1,7 @@
 <?PHP
 	require 'includes/master.inc.php';
 	$Auth->requireAdmin('login.php');
-	
+
 	$f = new Feedback($_GET['id']);
 	if(!$f->ok()) redirect('feedback.php');
 
@@ -85,7 +85,12 @@
 								<tr>
 									<th class="r">Email</th>
 									<td>
-										<a href="mailto:<?PHP echo $f->email;?>"><?PHP echo $f->email;?></a>
+										<a href="mailto:<?PHP
+										echo "{$f->email}?subject=";
+										echo rawurlencode("Feedback {$f->appname} {$f->appversion} (Ticket #{$f->id})");
+										echo "&body=";
+										echo rawurlencode("\n\n=== YOUR ORIGINAL MESSAGE ===\n\n{$f->__message}\n");
+										?>"><?PHP echo $f->email;?></a>
 										<?PHP echo ($f->reply == 1) ? "(Wants a reply)" : "(Does not want a reply)"; ?>
 									</td>
 								</tr>
@@ -128,14 +133,14 @@
 									<input type="submit" name="btnNew" value="Mark as New" id="btnnew"/>
 									<input type="submit" name="btnDelete" value="Delete" id="btndelete" onclick="return confirm('Are you sure?');"/>
 								</p>
-							</form>					
-	
+							</form>
+
 						</div>
-					</div>              
+					</div>
                 </div></div>
             </div>
             <div id="sidebar" class="yui-b">
-				
+
             </div>
         </div>
 

@@ -62,35 +62,44 @@
                             <table>
                                 <thead>
                                     <tr>
-										<td>ID</td>
-										<td>Application</td>
-										<td>Type</td>
-										<td>Email</td>
-										<td>Wants Reply?</td>
-										<td>Date</td>
+										<td>Message</td>
 										<td>&nbsp;</td>
                                     </tr>
                                 </thead>
                                 <tbody>
 									<?PHP foreach($feedback as $f) : ?>
 									<tr class="<?PHP if($f->new == 1) echo "new"; ?>">
-										<td><?PHP echo $f->id; ?></td>
-										<td><?PHP echo $f->appname; ?> <?PHP echo $f->appversion; ?></td>
-										<td><?PHP echo $f->type; ?></td>
-										<td><?PHP echo $f->email; ?></td>
-										<td><?PHP echo ($f->reply == 1) ? '<strong>Yes</strong>' : 'No'; ?></td>
-										<td><?PHP echo time2str($f->dt); ?></td>
+										<td>
+                                             <strong><?PHP echo strtoupper($f->type); ?>
+                                            <?PHP echo $f->appname; ?>
+                                            <?PHP echo $f->appversion; ?>
+                                            #<?PHP echo $f->id; ?>
+                                            </strong>
+                                            (<?PHP echo time2str($f->dt); ?>)
+                                            <br/>
+                                        <a href="mailto:<?PHP
+                                        echo "{$f->email}?subject=";
+                                        echo rawurlencode("Feedback {$f->appname} {$f->appversion} (Ticket #{$f->id})");
+                                        echo "&body=";
+                                        echo rawurlencode("\n\n=== YOUR ORIGINAL MESSAGE ===\n\n{$f->__message}\n");
+                                        ?>"><?PHP echo $f->email;?></a>
+
+                                            <?PHP echo ($f->reply == 1) ? "(Wants a reply)" : "(Does not want a reply)"; ?>
+                                            <br />
+                                            <?PHP echo nl2br($f->__message);?>
+
+                                        </td>
 										<td><a href="feedback-view.php?id=<?PHP echo $f->id; ?>">View</a></td>
 									</tr>
 									<?PHP endforeach; ?>
                                 </tbody>
                             </table>
 						</div>
-					</div>              
+					</div>
                 </div></div>
             </div>
             <div id="sidebar" class="yui-b">
-				
+
             </div>
         </div>
 

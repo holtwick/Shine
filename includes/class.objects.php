@@ -26,14 +26,14 @@
 			$db = Database::getDatabase();
 			return $db->getValue("SELECT version_number FROM versions WHERE app_id = '{$this->id}' ORDER BY dt DESC LIMIT 1");
 		}
-		
+
 		public function strLastReleaseDate()
 		{
 			$db = Database::getDatabase();
 			$dt = $db->getValue("SELECT dt FROM versions WHERE app_id = '{$this->id}' ORDER BY dt DESC LIMIT 1");
 			return dater('m/d/Y', $dt);
 		}
-		
+
 		public function totalDownloads()
 		{
 			$db = Database::getDatabase();
@@ -45,19 +45,31 @@
 			$db = Database::getDatabase();
 			return $db->getValue("SELECT SUM(updates) FROM versions WHERE app_id = '{$this->id}'");
 		}
-				
+
+        /* public function numFeedbacks()
+        {
+            $db = Database::getDatabase();
+            return $db->getValue("SELECT COUNT(*) FROM feedback WHERE appname = '{$this->name}' AND new = 1");
+        } */
+
+        public function numFeedbacksUnread()
+        {
+            $db = Database::getDatabase();
+            return $db->getValue("SELECT COUNT(*) FROM feedback WHERE appname = '{$this->name}' AND new = 1");
+        }
+
 		public function numSupportQuestions()
 		{
 			$db = Database::getDatabase();
 			return $db->getValue("SELECT COUNT(*) FROM feedback WHERE appname = '{$this->name}' AND `type` = 'support' AND new = 1");
 		}
-		
+
 		public function numBugReports()
 		{
 			$db = Database::getDatabase();
 			return $db->getValue("SELECT COUNT(*) FROM feedback WHERE appname = '{$this->name}' AND `type` = 'bug' AND new = 1");
 		}
-		
+
 		public function numFeatureRequests()
 		{
 			$db = Database::getDatabase();
@@ -68,10 +80,10 @@
 		{
 			return str_replace(array('{first_name}', '{last_name}', '{payer_email}', '{license}'), array($order->first_name, $order->last_name, $order->payer_email, $order->license), $this->email_body);
 		}
-		
+
 		function ordersPerMonth()
 		{
-			$db = Database::getDatabase();			
+			$db = Database::getDatabase();
 
 			$orders = $db->getRows("SELECT DATE_FORMAT(dt, '%Y-%m') as dtstr, COUNT(*) FROM orders WHERE type = 'PayPal' AND app_id = '{$this->id}' GROUP BY CONCAT(YEAR(dt), '-', MONTH(dt)) ORDER BY YEAR(dt) ASC, MONTH(dt) ASC");
 			$keys = gimme($orders, 'dtstr');
@@ -79,7 +91,7 @@
 			$orders = array();
 			for($i = 0; $i < count($keys); $i++)
 				$orders[$keys[$i]] = $values[$i];
-				
+
 			$first_order_date = $db->getValue("SELECT dt FROM orders ORDER BY dt ASC LIMIT 1");
 			list($year, $month) = explode('-', dater($first_order_date, 'Y-n'));
 
@@ -88,7 +100,7 @@
 				$month = str_pad($month, 2, '0', STR_PAD_LEFT);
 				if(!isset($orders["$year-$month"]))
 					$orders["$year-$month"] = 0;
-				
+
 				$month = intval($month) + 1;
 				if($month == 13)
 				{
@@ -97,7 +109,7 @@
 				}
 			}
 			while($year <> date('Y') && $month <> date('m'));
-			
+
 			ksort($orders);
 			return $orders;
 		}
@@ -120,10 +132,10 @@
 				$app = new Application($this->app_id);
 				$cache[$this->app_id] = $app->name;
 			}
-			
+
 			return $cache[$this->app_id];
 		}
-		
+
 		function generateLicense()
 		{
 			$app = new Application($this->app_id);
@@ -145,7 +157,7 @@
 			$this->license = strtoupper(md5($str . $app->custom_salt));
 			$this->update();
 		}
-		
+
 		function generateLicenseAP()
 		{
 			// Much of the following code is adapted/copied from AquaticPrime's PHP library...
@@ -184,7 +196,7 @@
 			$this->license = $plist;
 			$this->update();
 		}
-		
+
 		function emailLicense()
 		{
 			$app = new Application($this->app_id);
@@ -193,7 +205,7 @@
 			else
 				$this->emailLicenseCustom();
 		}
-		
+
 		public function emailLicenseCustom()
 		{
 			$app = new Application($this->app_id);
@@ -245,24 +257,24 @@
 		// public function emailLicenseSMTP()
 		// {
 		// 	$app = new Application($this->app_id);
-		// 
+		//
 		// 	$tmp = tempnam('/tmp', 'foo');
 		// 	file_put_contents($tmp, $this->license);
-		// 
+		//
 		//  			$hdrs = array('From' => $app->from_email, 'Subject' => $app->email_subject);
-		// 
+		//
 		// 	$mime = new Mail_mime("\r\n");
 		// 	$mime->setTXTBody($app->getBody($this));
 		// 	$mime->setHTMLBody('');
 		// 	// $mime->addAttachment($tmp, 'application/octet-stream', $app->license_filename, true, 'base64');
-		// 
+		//
 		// 	$body = $mime->get();
 		// 	$hdrs = $mime->headers($hdrs);
-		// 
+		//
 		// 	$smtp =& Mail::factory('smtp', array('host' => SMTP_HOST, 'port' => SMTP_PORT, 'auth' => true, 'username' => SMTP_USERNAME, 'password' => SMTP_PASSWORD));
 		// 	$mail = $smtp->send($this->payer_email, $hdrs, $body);
 		// }
-		
+
 		public function downloadLicense()
 		{
 			$app = new Application($this->app_id);
@@ -278,16 +290,16 @@
 			echo $this->license;
 			exit;
 		}
-		
+
 		public function intlAmount()
 		{
 			$currencies = array('USD' => '$', 'GBP' =>'£', 'EUR' => '€', 'CAD' => '$', 'JPY' => '¥');
-			
+
 			if($this->mc_currency == '') return '';
-			
+
 			return $currencies[$this->mc_currency] . number_format($this->mc_gross, 2);
 		}
-		
+
 		public static function totalOrders($id = null)
 		{
 			$db = Database::getDatabase();

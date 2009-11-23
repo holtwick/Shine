@@ -5,7 +5,7 @@
 	$applications = DBObject::glob('Application', 'SELECT * FROM applications ORDER BY name');
 
 	$db = Database::getDatabase();
-	
+
 	if(isset($_GET['q']))
 	{
 		$q = $_GET['q'];
@@ -169,7 +169,7 @@
 							<div class="clear"></div>
 						</div>
 					</div>
-              
+
                 </div></div>
             </div>
             <div id="sidebar" class="yui-b">
@@ -204,6 +204,7 @@
 					</div>
 				</div>
 
+    <?php /*
 				<div class="block">
 					<div class="hd">
 						<h2>Orders Per Month (All)</h2>
@@ -212,6 +213,7 @@
 						<a href="<?PHP echo $opma_fb->draw(false); ?>" class="fb"><?PHP $opma->draw(); ?></a>
 					</div>
 				</div>
+				*/ ?>
             </div>
         </div>
 
@@ -220,7 +222,7 @@
 	<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
 	<script type="text/javascript" src="js/jquery.fancybox-1.2.1.pack.js"></script>
 	<script type="text/javascript" charset="utf-8">
- 		$(".fb").fancybox({ 'zoomSpeedIn': 300, 'zoomSpeedOut': 300, 'overlayShow': false }); 
+ 		$(".fb").fancybox({ 'zoomSpeedIn': 300, 'zoomSpeedOut': 300, 'overlayShow': false });
 	</script>
 </body>
 </html>
